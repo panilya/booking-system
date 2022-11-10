@@ -2,12 +2,17 @@ package com.cloudwaitress.bookingsystem.booking
 
 import org.springframework.data.jpa.repository.JpaRepository
 import java.time.LocalDateTime
+import java.util.*
 import javax.persistence.*
 import javax.persistence.Table
 
 interface ClientRepository : JpaRepository<Client, Long> {}
 
-interface RestaurantRepository : JpaRepository<Restaurant, Long> {}
+interface RestaurantRepository : JpaRepository<Restaurant, Long> {
+
+    fun findByName(name: String): Optional<Restaurant>
+
+}
 
 interface TableRepository : JpaRepository<com.cloudwaitress.bookingsystem.booking.Table, Long> {}
 

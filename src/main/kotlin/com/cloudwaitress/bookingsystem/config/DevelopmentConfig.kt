@@ -35,18 +35,18 @@ class DevelopmentConfig {
 
         if (fillDatabase) {
 
-            restaurantRepository.findById(1).orElse(restaurantRepository.saveAndFlush(createRestaurant(id = 1)))
+            restaurantRepository.save(createRestaurant(name = "Ilya's Restaurant"))
 
             repeat(10) {
-                restaurantRepository.saveAndFlush(createRestaurant())
+                restaurantRepository.save(createRestaurant())
             }
 
             repeat(10) {
-                tableRepository.saveAndFlush(createTable(restaurant = restaurantRepository.findById(1).get()))
+                tableRepository.save(createTable(restaurant = restaurantRepository.findByName("Ilya's Restaurant").get()))
             }
 
             repeat(5) {
-                clientRepository.saveAndFlush(createClient())
+                clientRepository.save(createClient())
             }
         }
 

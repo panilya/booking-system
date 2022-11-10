@@ -15,12 +15,11 @@ object RestaurantObjectMother {
         )
     }
 
-    fun createRestaurant(table: MutableList<Table>? = null, id: Long? = null): Restaurant {
+    fun createRestaurant(table: MutableList<Table>? = null, name: String): Restaurant {
         return Restaurant(
-            name = faker.name().fullName(),
+            name = name,
             openingHours = faker.options().option("8 AM : 6 PM", "6 AM : 6 PM", "10 AM : 10 PM"),
-            table = table,
-            id = id
+            table = table
         )
     }
 }
