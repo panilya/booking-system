@@ -1,9 +1,6 @@
 package com.cloudwaitress.bookingsystem.fakedata
 
-import com.cloudwaitress.bookingsystem.booking.Client
-import com.cloudwaitress.bookingsystem.booking.Restaurant
-import com.cloudwaitress.bookingsystem.booking.Table
-import com.cloudwaitress.bookingsystem.booking.TimeSlot
+import com.cloudwaitress.bookingsystem.booking.*
 import net.datafaker.Faker
 import java.sql.Timestamp
 import java.time.Instant
@@ -23,7 +20,7 @@ object TableObjectMother {
             reserved = faker.bool().bool(),
             placed = faker.date().between(Timestamp.from(Instant.now().minusSeconds(432000)), Timestamp.from(Instant.now())).toLocalDateTime(), // Between now and minus 5 days from now
             specialEvent = faker.options().option("Birthday", "Anniversary", "Wedding"),
-            tableStatus = faker.options().option("Confirmed", "Unconfirmed", "Seated"),
+            tableStatus = faker.options().option(TableStatus::class.java),
             client = client,
             restaurant = restaurant,
             timeSlot = timeSlot
