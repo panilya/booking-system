@@ -16,8 +16,7 @@ object ClientObjectMother {
         return Client(
             name,
             phoneNumber,
-            email,
-            table
+            email
         )
     }
 }
