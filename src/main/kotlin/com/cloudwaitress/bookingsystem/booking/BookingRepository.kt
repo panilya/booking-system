@@ -73,8 +73,8 @@ class Table(
     @Column(columnDefinition = "TEXT")
     var notes: String? = null,
 
-    @Column
-    var tableStatus: String, // TODO: Confirmed, Un-confirmed, Seated... ?
+    @Enumerated(EnumType.STRING)
+    var tableStatus: TableStatus? = null,
 
     @Column
     var reserved: Boolean? = null,
@@ -113,3 +113,7 @@ class TimeSlot(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 )
+
+enum class TableStatus { // TODO: add more
+    UNCONFIRMED, CONFIRMED, SEATED
+}
