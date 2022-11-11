@@ -26,9 +26,6 @@ class Restaurant(
     @Column(columnDefinition = "TEXT", nullable = false)
     var openingHours: String,
 
-    @OneToMany(mappedBy = "restaurant")
-    var table: MutableList<com.cloudwaitress.bookingsystem.booking.Table>? = mutableListOf(),
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
