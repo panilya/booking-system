@@ -1,11 +1,10 @@
 package com.cloudwaitress.bookingsystem.config
 
-import com.cloudwaitress.bookingsystem.booking.ClientRepository
-import com.cloudwaitress.bookingsystem.booking.RestaurantRepository
-import com.cloudwaitress.bookingsystem.booking.TableRepository
+import com.cloudwaitress.bookingsystem.booking.*
 import com.cloudwaitress.bookingsystem.fakedata.ClientObjectMother.createClient
 import com.cloudwaitress.bookingsystem.fakedata.RestaurantObjectMother.createRestaurant
 import com.cloudwaitress.bookingsystem.fakedata.TableObjectMother.createTable
+import com.cloudwaitress.bookingsystem.fakedata.TimeSlotObjectMother.createTimeslot
 import net.datafaker.Faker
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
@@ -21,7 +20,8 @@ class DevelopmentConfig {
     fun init(
         clientRepository: ClientRepository,
         tableRepository: TableRepository,
-        restaurantRepository: RestaurantRepository
+        restaurantRepository: RestaurantRepository,
+        timeSlotRepository: TimeSlotRepository
     ) = CommandLineRunner {
 
         val reset = true
@@ -31,18 +31,25 @@ class DevelopmentConfig {
             clientRepository.deleteAll()
             tableRepository.deleteAll()
             restaurantRepository.deleteAll()
+            timeSlotRepository.deleteAll()
         }
 
         if (fillDatabase) {
-
             restaurantRepository.save(createRestaurant(name = "Ilya's Restaurant"))
 
             repeat(10) {
                 restaurantRepository.save(createRestaurant())
             }
 
-            repeat(10) {
-                tableRepository.save(createTable(restaurant = restaurantRepository.findByName("Ilya's Restaurant").get()))
+            IntRange(1, 20).map {
+                val timeSlot = timeSlotRepository.save(createTimeslot())
+                tableRepository.save(
+                    createTable(
+                        number = it,
+                        restaurant = restaurantRepository.findByName("Ilya's Restaurant").get(),
+                        timeSlot = timeSlot
+                    )
+                )
             }
 
             repeat(5) {

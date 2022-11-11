@@ -16,6 +16,8 @@ interface RestaurantRepository : JpaRepository<Restaurant, Long> {
 
 interface TableRepository : JpaRepository<com.cloudwaitress.bookingsystem.booking.Table, Long> {}
 
+interface TimeSlotRepository : JpaRepository<TimeSlot, Long> {}
+
 @Entity
 @Table
 class Restaurant(
@@ -25,6 +27,9 @@ class Restaurant(
 
     @Column(columnDefinition = "TEXT", nullable = false)
     var openingHours: String,
+
+    @OneToMany(mappedBy = "restaurant")
+    var table: MutableList<com.cloudwaitress.bookingsystem.booking.Table>? = null,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,16 +62,10 @@ class Client(
 class Table(
 
     @Column
+    var number: Int? = null,
+
+    @Column
     var capacity: Short,
-
-    @Column
-    var availability: Boolean,
-
-    @Column
-    var placed: LocalDateTime? = null,
-
-    @Column
-    var bookingFor: LocalDateTime? = null,
 
     @Column(columnDefinition = "TEXT")
     var specialEvent: String? = null,
@@ -75,7 +74,13 @@ class Table(
     var notes: String? = null,
 
     @Column
-    var clientStatus: String, // TODO: Confirmed, Un-confirmed, Seated... ?
+    var tableStatus: String, // TODO: Confirmed, Un-confirmed, Seated... ?
+
+    @Column
+    var reserved: Boolean? = null,
+
+    @Column
+    var placed: LocalDateTime? = null,
 
     @OneToOne
     @JoinColumn(name = "client_id")
@@ -84,6 +89,25 @@ class Table(
     @ManyToOne()
     @JoinColumn(name = "restaurant_id")
     var restaurant: Restaurant,
+
+    @ManyToOne()
+    @JoinColumn(name = "time_slot_id")
+    var timeSlot: TimeSlot? = null,
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null
+)
+
+@Entity
+@Table(name = "time_slot")
+class TimeSlot(
+
+    @Column(name = "timeslot")
+    var timeSlot: LocalDateTime,
+
+    @OneToMany(mappedBy = "timeSlot")
+    var table: MutableList<com.cloudwaitress.bookingsystem.booking.Table> = mutableListOf(),
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
