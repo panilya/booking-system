@@ -2,8 +2,9 @@ package com.cloudwaitress.bookingsystem.config
 
 import com.cloudwaitress.bookingsystem.booking.*
 import com.cloudwaitress.bookingsystem.fakedata.ClientObjectMother.createClient
+import com.cloudwaitress.bookingsystem.fakedata.ReservationObjectMother
 import com.cloudwaitress.bookingsystem.fakedata.RestaurantObjectMother.createRestaurant
-import com.cloudwaitress.bookingsystem.fakedata.TableObjectMother.createTable
+import com.cloudwaitress.bookingsystem.fakedata.TableObjectMother
 import com.cloudwaitress.bookingsystem.fakedata.TimeSlotObjectMother.createTimeslot
 import net.datafaker.Faker
 import org.springframework.boot.CommandLineRunner
@@ -18,16 +19,18 @@ class DevelopmentConfig {
 
     @Bean
     fun init(
+        reservationRepository: ReservationRepository,
         clientRepository: ClientRepository,
         tableRepository: TableRepository,
         restaurantRepository: RestaurantRepository,
         timeSlotRepository: TimeSlotRepository
     ) = CommandLineRunner {
 
-        val reset = true
-        val fillDatabase = true
+        val reset = false
+        val fillDatabase = false
 
         if (reset) {
+            reservationRepository.deleteAll()
             clientRepository.deleteAll()
             tableRepository.deleteAll()
             restaurantRepository.deleteAll()
@@ -42,20 +45,18 @@ class DevelopmentConfig {
             }
 
             IntRange(1, 20).map {
+                val client = clientRepository.save(createClient())
                 val timeSlot = timeSlotRepository.save(createTimeslot())
-                tableRepository.save(
-                    createTable(
-                        number = it,
-                        restaurant = restaurantRepository.findByName("Ilya's Restaurant").get(),
-                        timeSlot = timeSlot
-                    )
-                )
+                reservationRepository.save(ReservationObjectMother.createReservation(client, timeSlot))
             }
 
             repeat(5) {
                 clientRepository.save(createClient())
             }
-        }
 
+            repeat(10) {
+                tableRepository.save(TableObjectMother.createTable(restaurantRepository.findByName("Ilya's Restaurant").get()))
+            }
+        }
     }
 }
