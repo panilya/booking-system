@@ -1,44 +1,55 @@
-create table client(
-    id              bigserial not null,
-    name            varchar(255) not null,
-    phone_number    varchar(255) not null,
-    email           varchar(255),
-    primary key (id)
+CREATE TABLE client
+(
+    id           BIGSERIAL NOT NULL,
+    name         VARCHAR(255),
+    phone_number TEXT,
+    email        TEXT,
+    CONSTRAINT pk_client PRIMARY KEY (id)
 );
 
-create table restaurant(
-    id              bigserial not null,
-    name            text not null,
-    opening_hours   text,
-    primary key (id)
+CREATE TABLE reservation
+(
+    id             BIGSERIAL NOT NULL,
+    status         VARCHAR(255),
+    payment_status VARCHAR(255),
+    party_size     INTEGER                                 NOT NULL,
+    table_id       BIGINT,
+    client_id      BIGINT,
+    time_slot_id   BIGINT,
+    CONSTRAINT pk_reservation PRIMARY KEY (id)
 );
 
-create table tables(
-    id              bigserial not null,
-    number          int not null,
-    capacity        smallint not null,
-    special_event   text,
-    notes           text,
-    table_status    varchar(255),
-    reserved        boolean,
-    placed          timestamp,
-    client_id       bigint,
-    restaurant_id   bigint not null,
-    time_slot_id    bigint,
-    primary key (id)
+CREATE TABLE tables
+(
+    id            BIGSERIAL NOT NULL,
+    capacity      INTEGER,
+    restaurant_id BIGINT,
+    CONSTRAINT pk_table PRIMARY KEY (id)
 );
 
-create table time_slot(
-    id bigserial not null,
-    timeslot timestamp not null,
-    primary key (id)
+CREATE TABLE time_slot
+(
+    id       BIGSERIAL NOT NULL ,
+    timeslot timestamp,
+    CONSTRAINT pk_timeslot PRIMARY KEY (id)
 );
+
+CREATE TABLE restaurant
+(
+    id            BIGSERIAL                               NOT NULL,
+    name          TEXT                                    NOT NULL,
+    opening_hours TEXT                                    NOT NULL,
+    CONSTRAINT pk_restaurant PRIMARY KEY (id)
+);
+
+ALTER TABLE reservation
+    ADD CONSTRAINT FK_RESERVATION_ON_CLIENT FOREIGN KEY (client_id) REFERENCES client (id);
+
+ALTER TABLE reservation
+    ADD CONSTRAINT FK_RESERVATION_ON_TABLE FOREIGN KEY (table_id) REFERENCES tables (id);
+
+ALTER TABLE reservation
+    ADD CONSTRAINT FK_RESERVATION_ON_TIMESLOT FOREIGN KEY (time_slot_id) REFERENCES time_slot (id);
 
 ALTER TABLE tables
-    ADD CONSTRAINT FK_tables_client FOREIGN KEY (client_id) REFERENCES client (id);
-
-ALTER TABLE tables
-    ADD CONSTRAINT FK_tables_restaurant FOREIGN KEY (restaurant_id) REFERENCES restaurant (id);
-
-ALTER TABLE tables
-    ADD CONSTRAINT FK_tables_timeslot FOREIGN KEY (time_slot_id) REFERENCES time_slot (id);
+    ADD CONSTRAINT FK_TABLE_ON_RESTAURANT FOREIGN KEY (restaurant_id) REFERENCES restaurant (id);

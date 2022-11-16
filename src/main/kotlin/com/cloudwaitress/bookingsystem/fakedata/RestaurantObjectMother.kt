@@ -19,4 +19,12 @@ object RestaurantObjectMother {
             openingHours = faker.options().option("8 AM : 6 PM", "6 AM : 6 PM", "10 AM : 10 PM"),
         )
     }
+
+    fun createRestaurant(name: String, openingHours: String): Restaurant {
+        return Restaurant(
+            name = name,
+            openingHours = openingHours,
+        )
+    }
+
 }

@@ -1,7 +1,7 @@
 package com.cloudwaitress.bookingsystem.fakedata
 
 import com.cloudwaitress.bookingsystem.booking.Client
-import com.cloudwaitress.bookingsystem.booking.Table
+import com.cloudwaitress.bookingsystem.booking.Reservation
 import net.datafaker.Faker
 
 object ClientObjectMother {
@@ -11,12 +11,13 @@ object ClientObjectMother {
         name: String = faker.name().fullName(),
         phoneNumber: String = faker.phoneNumber().phoneNumber(),
         email: String = faker.internet().emailAddress(),
-        table: Table? = null
+        reservation: Reservation? = null
     ): Client {
         return Client(
             name,
             phoneNumber,
-            email
+            email,
+            reservation = reservation
         )
     }
 }

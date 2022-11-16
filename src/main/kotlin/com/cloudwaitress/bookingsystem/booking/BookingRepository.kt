@@ -1,21 +1,29 @@
 package com.cloudwaitress.bookingsystem.booking
 
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
 import javax.persistence.Table
 
+@Repository
 interface ClientRepository : JpaRepository<Client, Long> {}
 
+@Repository
 interface RestaurantRepository : JpaRepository<Restaurant, Long> {
 
     fun findByName(name: String): Optional<Restaurant>
 
 }
 
+@Repository
 interface TableRepository : JpaRepository<com.cloudwaitress.bookingsystem.booking.Table, Long> {}
 
+@Repository
+interface ReservationRepository : JpaRepository<Reservation, Long> {}
+
+@Repository
 interface TimeSlotRepository : JpaRepository<TimeSlot, Long> {}
 
 @Entity
@@ -37,62 +45,17 @@ class Restaurant(
 )
 
 @Entity
-@Table
-class Client(
-
-    @Column(name = "name", nullable = false)
-    var name: String,
-
-    @Column(name = "phone_number")
-    var phoneNumber: String? = null,
-
-    @Column(name = "email")
-    var email: String? = null,
-
-    @OneToOne(mappedBy = "client")
-    var table: com.cloudwaitress.bookingsystem.booking.Table? = null,
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
-)
-
-@Entity
 @Table(name = "tables")
 class Table(
 
     @Column
-    var number: Int? = null,
+    var capacity: Int? = null,
 
-    @Column
-    var capacity: Short,
+    @ManyToOne
+    var restaurant: Restaurant? = null,
 
-    @Column(columnDefinition = "TEXT")
-    var specialEvent: String? = null,
-
-    @Column(columnDefinition = "TEXT")
-    var notes: String? = null,
-
-    @Enumerated(EnumType.STRING)
-    var tableStatus: TableStatus? = null,
-
-    @Column
-    var reserved: Boolean? = null,
-
-    @Column
-    var placed: LocalDateTime? = null,
-
-    @OneToOne
-    @JoinColumn(name = "client_id")
-    var client: Client?,
-
-    @ManyToOne()
-    @JoinColumn(name = "restaurant_id")
-    var restaurant: Restaurant,
-
-    @ManyToOne()
-    @JoinColumn(name = "time_slot_id")
-    var timeSlot: TimeSlot? = null,
+    @OneToOne(mappedBy = "table")
+    var reservation: Reservation? = null,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -100,20 +63,75 @@ class Table(
 )
 
 @Entity
-@Table(name = "time_slot")
-class TimeSlot(
+@Table
+class Client(
 
-    @Column(name = "timeslot")
-    var timeSlot: LocalDateTime,
+    @Column
+    var name: String,
 
-    @OneToMany(mappedBy = "timeSlot")
-    var table: MutableList<com.cloudwaitress.bookingsystem.booking.Table> = mutableListOf(),
+    @Column(columnDefinition = "TEXT")
+    var phoneNumber: String? = null,
+
+    @Column(columnDefinition = "TEXT")
+    var email: String? = null,
+
+    @OneToOne(mappedBy = "client")
+    var reservation: Reservation? = null,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
 )
 
-enum class TableStatus { // TODO: add more
-    UNCONFIRMED, CONFIRMED, SEATED
+@Entity
+@Table
+class TimeSlot(
+
+    @Column(columnDefinition = "timestamp")
+    var timeslot: LocalDateTime,
+
+    @OneToOne(mappedBy = "timeSlot")
+    var reservation: Reservation? = null,
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null
+)
+
+@Entity
+@Table
+class Reservation(
+
+    @Enumerated(EnumType.STRING)
+    var status: TableStatus,
+
+    @Enumerated(EnumType.STRING)
+    var paymentStatus: PaymentStatus,
+
+    @Column
+    var partySize: Int,
+
+    @OneToOne
+    @JoinColumn(name = "table_id")
+    var table: com.cloudwaitress.bookingsystem.booking.Table? = null,
+
+    @OneToOne
+    @JoinColumn(name = "client_id")
+    var client: Client,
+
+    @OneToOne
+    @JoinColumn(name = "time_slot_id")
+    var timeSlot: TimeSlot,
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null
+)
+
+enum class TableStatus {
+    ON_TIME, LATE, OVER_TIME
+}
+
+enum class PaymentStatus {
+    PRE_PAID, NOT_PRE_PAID
 }
