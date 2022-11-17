@@ -26,6 +26,9 @@ interface ReservationRepository : JpaRepository<Reservation, Long> {}
 @Repository
 interface TimeSlotRepository : JpaRepository<TimeSlot, Long> {}
 
+@Repository
+interface RoomRepository : JpaRepository<Room, Long> {}
+
 @Entity
 @Table
 class Restaurant(
@@ -35,6 +38,9 @@ class Restaurant(
 
     @Column(columnDefinition = "TEXT", nullable = false)
     var openingHours: String,
+
+    @OneToMany(mappedBy = "restaurant")
+    var rooms: MutableList<Room>? = null,
 
     @OneToMany(mappedBy = "restaurant")
     var table: MutableList<com.cloudwaitress.bookingsystem.booking.Table>? = null,
@@ -53,6 +59,10 @@ class Table(
 
     @ManyToOne
     var restaurant: Restaurant? = null,
+
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    var room: Room,
 
     @OneToOne(mappedBy = "table")
     var reservation: Reservation? = null,
@@ -92,6 +102,25 @@ class TimeSlot(
 
     @OneToOne(mappedBy = "timeSlot")
     var reservation: Reservation? = null,
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null
+)
+
+@Entity
+@Table
+class Room(
+
+    @Column(columnDefinition = "TEXT")
+    var name: String,
+
+    @OneToMany(mappedBy = "room")
+    var tables: MutableList<com.cloudwaitress.bookingsystem.booking.Table>? = null,
+
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    var restaurant: Restaurant,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

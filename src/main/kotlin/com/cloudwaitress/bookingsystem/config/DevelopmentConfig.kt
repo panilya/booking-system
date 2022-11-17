@@ -4,6 +4,7 @@ import com.cloudwaitress.bookingsystem.booking.*
 import com.cloudwaitress.bookingsystem.fakedata.ClientObjectMother.createClient
 import com.cloudwaitress.bookingsystem.fakedata.ReservationObjectMother
 import com.cloudwaitress.bookingsystem.fakedata.RestaurantObjectMother.createRestaurant
+import com.cloudwaitress.bookingsystem.fakedata.RoomObjectMother.createRoom
 import com.cloudwaitress.bookingsystem.fakedata.TableObjectMother
 import com.cloudwaitress.bookingsystem.fakedata.TimeSlotObjectMother.createTimeslot
 import net.datafaker.Faker
@@ -23,17 +24,19 @@ class DevelopmentConfig {
         clientRepository: ClientRepository,
         tableRepository: TableRepository,
         restaurantRepository: RestaurantRepository,
-        timeSlotRepository: TimeSlotRepository
+        timeSlotRepository: TimeSlotRepository,
+        roomRepository: RoomRepository
     ) = CommandLineRunner {
 
-        val reset = false
-        val fillDatabase = false
+        val reset = true
+        val fillDatabase = true
 
         if (reset) {
             reservationRepository.deleteAll()
             clientRepository.deleteAll()
             tableRepository.deleteAll()
             restaurantRepository.deleteAll()
+            roomRepository.deleteAll()
             timeSlotRepository.deleteAll()
         }
 
@@ -54,8 +57,10 @@ class DevelopmentConfig {
                 clientRepository.save(createClient())
             }
 
-            repeat(10) {
-                tableRepository.save(TableObjectMother.createTable(restaurantRepository.findByName("Ilya's Restaurant").get()))
+            val room = roomRepository.save(createRoom(restaurant = restaurantRepository.findByName("Ilya's Restaurant").get()))
+
+            IntRange(1, 20).map {
+                tableRepository.save(TableObjectMother.createTable(room = room, restaurant = restaurantRepository.findByName("Ilya's Restaurant").get()))
             }
         }
     }
