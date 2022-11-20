@@ -45,6 +45,9 @@ class Restaurant(
     @Column(columnDefinition = "TEXT", nullable = false)
     var openingHours: String,
 
+    @Column
+    var objectId: String? = UUID.randomUUID().toString(),
+
     @OneToMany(mappedBy = "restaurant")
     var rooms: MutableList<Room>? = null,
 
@@ -62,6 +65,9 @@ class Table(
 
     @Column
     var capacity: Int? = null,
+
+    @Column
+    var objectId: String? = UUID.randomUUID().toString(),
 
     @ManyToOne
     var restaurant: Restaurant? = null,
@@ -81,6 +87,9 @@ class Table(
 @Entity
 @Table
 class Client(
+
+    @Column
+    var objectId: String? = UUID.randomUUID().toString(),
 
     @Column
     var name: String,
@@ -121,6 +130,9 @@ class Room(
     @Column(columnDefinition = "TEXT")
     var name: String,
 
+    @Column
+    var objectId: String? = UUID.randomUUID().toString(),
+
     @OneToMany(mappedBy = "room")
     var tables: MutableList<com.cloudwaitress.bookingsystem.booking.Table>? = null,
 
@@ -136,6 +148,9 @@ class Room(
 @Entity
 @Table
 class Reservation(
+
+    @Column
+    var objectId: String? = UUID.randomUUID().toString(),
 
     @Enumerated(EnumType.STRING)
     var status: TableStatus,
