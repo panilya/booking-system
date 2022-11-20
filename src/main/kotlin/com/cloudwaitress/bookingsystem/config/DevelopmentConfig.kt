@@ -35,8 +35,8 @@ class DevelopmentConfig {
             reservationRepository.deleteAll()
             clientRepository.deleteAll()
             tableRepository.deleteAll()
-            restaurantRepository.deleteAll()
             roomRepository.deleteAll()
+            restaurantRepository.deleteAll()
             timeSlotRepository.deleteAll()
         }
 

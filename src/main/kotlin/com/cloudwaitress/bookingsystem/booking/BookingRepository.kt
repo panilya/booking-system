@@ -1,6 +1,9 @@
 package com.cloudwaitress.bookingsystem.booking
 
+import com.cloudwaitress.bookingsystem.endpoints.Period
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import java.util.*
@@ -139,6 +142,9 @@ class Reservation(
 
     @Column
     var partySize: Int,
+
+    @Column
+    var createdAt: LocalDateTime,
 
     @OneToOne
     @JoinColumn(name = "table_id")
