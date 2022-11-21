@@ -26,8 +26,8 @@ interface TableRepository : JpaRepository<com.cloudwaitress.bookingsystem.bookin
 @Repository
 interface ReservationRepository : JpaRepository<Reservation, Long> {
 
-    @Query
-    fun countByCreatedAtBetween(createdAtStart: LocalDateTime, createdAtEnd: LocalDateTime): Long
+//    @Query
+//    fun countByCreatedAtBetweenAndObjectIdEquals(createdAtStart: LocalDateTime, createdAtEnd: LocalDateTime, objectId: String): Long
 
 }
 
@@ -53,6 +53,9 @@ class Restaurant(
 
     @Column
     var objectId: String = UUID.randomUUID().toString(),
+
+    @OneToMany(mappedBy = "restaurant")
+    var reservations: MutableList<Reservation>? = null,
 
     @OneToMany(mappedBy = "restaurant")
     var rooms: MutableList<Room>? = null,
@@ -179,6 +182,10 @@ class Reservation(
 
     @Column
     var createdAt: LocalDateTime,
+
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    var restaurant: Restaurant,
 
     @OneToOne
     @JoinColumn(name = "table_id")

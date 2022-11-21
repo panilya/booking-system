@@ -16,14 +16,32 @@ class JdbcReservationRepository(
     private val jdbcTemplate: NamedParameterJdbcTemplate
 ) {
 
-    fun countReservationsLastThisDate(period: Period): Long {
+    fun countReservationsBetweenDate(createdAtStart: LocalDateTime, createdAtEnd: LocalDateTime, objectId: String): Long {
+        println(createdAtStart.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+        val sqlQuery = """
+            SELECT count(r.id) FROM restaurant JOIN reservation r ON restaurant.id = r.restaurant_id 
+            WHERE r.created_at BETWEEN '${createdAtStart.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))}'::timestamp 
+            AND '${createdAtEnd.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))}'::timestamp 
+            AND restaurant.object_id = :objectId
+        """.trimIndent()
+
+        val namedParameters: SqlParameterSource = MapSqlParameterSource()
+//            .addValue("createdAtStart", createdAtStart.toString())
+//            .addValue("createdAtEnd", createdAtEnd.toString())
+            .addValue("objectId", objectId)
+
+        return jdbcTemplate.queryForObject(sqlQuery, namedParameters, Long::class.java)!!
+    }
+
+    fun countReservationsLastThisDate(objectId: String, period: Period): Long {
         val sql = if (period == Period.ALL_TIME) {
-            "SELECT count(id) FROM Reservation"
+            "SELECT count(r.id) FROM restaurant JOIN reservation r ON restaurant.id = r.restaurant_id WHERE restaurant.object_id = :objectId"
         } else {
-            "SELECT count(id) FROM Reservation WHERE created_at >= now() - '1 ${period.name.lowercase()}'::INTERVAL"
+            "SELECT count(r.id) FROM restaurant JOIN reservation r ON restaurant.id = r.restaurant_id WHERE created_at >= now() - '1 ${period.name.lowercase()}'::INTERVAL AND restaurant.object_id = :objectId"
         }
 
         val namedParameters: SqlParameterSource = MapSqlParameterSource()
+            .addValue("objectId", objectId)
 
         return jdbcTemplate.queryForObject(sql, namedParameters, Long::class.java)!!
     }
@@ -56,17 +74,5 @@ class JdbcReservationRepository(
         )
 
         return timeslots
-    }
-}
-
-class TimeslotRowMapper : RowMapper<TimeSlotDto>{
-    override fun mapRow(rs: ResultSet, rowNum: Int): TimeSlotDto? {
-        return TimeSlotDto(
-            rs.getString("timeslotObjectId"),
-            LocalDateTime.parse(rs.getString("timeSlot")),
-            rs.getString("restaurantObjectId"),
-            rs.getString("restaurantName"),
-            rs.getString("openingHours")
-        )
     }
 }

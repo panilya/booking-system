@@ -45,4 +45,23 @@ object TimeSlotObjectMother {
             restaurant = restaurant
         )
     }
+
+    fun createTimeslots(
+        times: Int,
+        reservation: Reservation? = null,
+        restaurant: Restaurant? = null,
+        timeslot: LocalDateTime,
+    ): MutableList<TimeSlot> {
+        val timeslots = mutableListOf<TimeSlot>()
+        IntRange(1, times).map {
+            timeslots.add(
+                TimeSlot(
+                    timeslot = timeslot,
+                    reservation = reservation,
+                    restaurant = restaurant
+                )
+            )
+        }
+        return timeslots
+    }
 }

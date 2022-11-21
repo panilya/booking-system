@@ -11,7 +11,8 @@ object ReservationObjectMother {
 
     fun createReservation(
         client: Client,
-        timeSlot: TimeSlot
+        timeSlot: TimeSlot,
+        restaurant: Restaurant
     ): Reservation {
         return Reservation(
             status = faker.options().option(TableStatus::class.java),
@@ -20,6 +21,7 @@ object ReservationObjectMother {
             createdAt = faker.date().between(faker.date().past(90, TimeUnit.DAYS), Timestamp.valueOf(LocalDateTime.now())).toLocalDateTime(),
             client = client,
             timeSlot = timeSlot,
+            restaurant = restaurant
         )
     }
 }

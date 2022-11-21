@@ -41,17 +41,20 @@ class DevelopmentConfig {
         }
 
         if (fillDatabase) {
-            val restaurant = restaurantRepository.save(createRestaurant(name = "Ilya's Restaurant"))
+            val ilyaRestaurant = restaurantRepository.save(createRestaurant(name = "Ilya's Restaurant"))
             clientRepository.save(createClient())
-            timeSlotRepository.saveAll(createTimeslots(20, restaurant = restaurant))
+            timeSlotRepository.saveAll(createTimeslots(20, restaurant = ilyaRestaurant))
 
             IntRange(1, 20).map {
-                val client = clientRepository.save(createClient())
+//                val client = clientRepository.save(createClient())
                 val restaurant = restaurantRepository.save(createRestaurant())
                 val timeslots = timeSlotRepository.saveAll(createTimeslots(20, restaurant = restaurant))
-                reservationRepository.save(ReservationObjectMother.createReservation(client,
-                    timeslots[faker.number().numberBetween(0, 20)]
-                ))
+                for (i in 1..19) {
+                    val client = clientRepository.save(createClient())
+                    reservationRepository.save(ReservationObjectMother.createReservation(client,
+                        timeslots[i], restaurant
+                    ))
+                }
             }
 
             repeat(5) {
