@@ -6,7 +6,7 @@ import com.cloudwaitress.bookingsystem.fakedata.ReservationObjectMother
 import com.cloudwaitress.bookingsystem.fakedata.RestaurantObjectMother.createRestaurant
 import com.cloudwaitress.bookingsystem.fakedata.RoomObjectMother.createRoom
 import com.cloudwaitress.bookingsystem.fakedata.TableObjectMother
-import com.cloudwaitress.bookingsystem.fakedata.TimeSlotObjectMother.createTimeslot
+import com.cloudwaitress.bookingsystem.fakedata.TimeSlotObjectMother.createTimeslots
 import net.datafaker.Faker
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
@@ -36,21 +36,22 @@ class DevelopmentConfig {
             clientRepository.deleteAll()
             tableRepository.deleteAll()
             roomRepository.deleteAll()
-            restaurantRepository.deleteAll()
             timeSlotRepository.deleteAll()
+            restaurantRepository.deleteAll()
         }
 
         if (fillDatabase) {
-            restaurantRepository.save(createRestaurant(name = "Ilya's Restaurant"))
-
-            repeat(10) {
-                restaurantRepository.save(createRestaurant())
-            }
+            val restaurant = restaurantRepository.save(createRestaurant(name = "Ilya's Restaurant"))
+            clientRepository.save(createClient())
+            timeSlotRepository.saveAll(createTimeslots(20, restaurant = restaurant))
 
             IntRange(1, 20).map {
                 val client = clientRepository.save(createClient())
-                val timeSlot = timeSlotRepository.save(createTimeslot())
-                reservationRepository.save(ReservationObjectMother.createReservation(client, timeSlot))
+                val restaurant = restaurantRepository.save(createRestaurant())
+                val timeslots = timeSlotRepository.saveAll(createTimeslots(20, restaurant = restaurant))
+                reservationRepository.save(ReservationObjectMother.createReservation(client,
+                    timeslots[faker.number().numberBetween(0, 20)]
+                ))
             }
 
             repeat(5) {

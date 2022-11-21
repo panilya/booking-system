@@ -1,7 +1,9 @@
 package com.cloudwaitress.bookingsystem.booking
 
+import com.cloudwaitress.bookingsystem.endpoints.dto.TimeSlotDto
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import java.util.*
@@ -30,7 +32,11 @@ interface ReservationRepository : JpaRepository<Reservation, Long> {
 }
 
 @Repository
-interface TimeSlotRepository : JpaRepository<TimeSlot, Long> {}
+interface TimeSlotRepository : JpaRepository<TimeSlot, Long> {
+
+
+
+}
 
 @Repository
 interface RoomRepository : JpaRepository<Room, Long> {}
@@ -46,13 +52,16 @@ class Restaurant(
     var openingHours: String,
 
     @Column
-    var objectId: String? = UUID.randomUUID().toString(),
+    var objectId: String = UUID.randomUUID().toString(),
 
     @OneToMany(mappedBy = "restaurant")
     var rooms: MutableList<Room>? = null,
 
     @OneToMany(mappedBy = "restaurant")
     var table: MutableList<com.cloudwaitress.bookingsystem.booking.Table>? = null,
+
+    @OneToMany(mappedBy = "restaurant")
+    var timeSlots: MutableList<TimeSlot>? = null,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,7 +76,7 @@ class Table(
     var capacity: Int? = null,
 
     @Column
-    var objectId: String? = UUID.randomUUID().toString(),
+    var objectId: String = UUID.randomUUID().toString(),
 
     @ManyToOne
     var restaurant: Restaurant? = null,
@@ -89,7 +98,7 @@ class Table(
 class Client(
 
     @Column
-    var objectId: String? = UUID.randomUUID().toString(),
+    var objectId: String = UUID.randomUUID().toString(),
 
     @Column
     var name: String,
@@ -118,6 +127,13 @@ class TimeSlot(
     @OneToOne(mappedBy = "timeSlot")
     var reservation: Reservation? = null,
 
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    var restaurant: Restaurant? = null,
+
+    @Column
+    var objectId: String = UUID.randomUUID().toString(),
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
@@ -131,7 +147,7 @@ class Room(
     var name: String,
 
     @Column
-    var objectId: String? = UUID.randomUUID().toString(),
+    var objectId: String = UUID.randomUUID().toString(),
 
     @OneToMany(mappedBy = "room")
     var tables: MutableList<com.cloudwaitress.bookingsystem.booking.Table>? = null,
@@ -150,7 +166,7 @@ class Room(
 class Reservation(
 
     @Column
-    var objectId: String? = UUID.randomUUID().toString(),
+    var objectId: String = UUID.randomUUID().toString(),
 
     @Enumerated(EnumType.STRING)
     var status: TableStatus,
