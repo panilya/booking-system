@@ -12,16 +12,18 @@ object ReservationObjectMother {
     fun createReservation(
         client: Client,
         timeSlot: TimeSlot,
-        restaurant: Restaurant
+        restaurant: Restaurant,
+        createdAt: LocalDateTime = faker.date().between(faker.date().past(90, TimeUnit.DAYS), Timestamp.valueOf(LocalDateTime.now())).toLocalDateTime()
     ): Reservation {
         return Reservation(
             status = faker.options().option(TableStatus::class.java),
             paymentStatus = faker.options().option(PaymentStatus::class.java),
             partySize = faker.number().numberBetween(1, 6),
-            createdAt = faker.date().between(faker.date().past(90, TimeUnit.DAYS), Timestamp.valueOf(LocalDateTime.now())).toLocalDateTime(),
+            createdAt = createdAt,
             client = client,
             timeSlot = timeSlot,
             restaurant = restaurant
         )
     }
+
 }

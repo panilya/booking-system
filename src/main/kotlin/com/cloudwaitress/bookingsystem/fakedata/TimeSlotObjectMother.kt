@@ -18,11 +18,13 @@ object TimeSlotObjectMother {
         IntRange(1, times).map {
             timeslots.add(
                 TimeSlot(
-                    timeslot = LocalDateTime.of(2022,
+                    timeslot = LocalDateTime.of(
+                        2022,
                         faker.number().numberBetween(1, 12),
                         faker.number().numberBetween(1, 28),
                         faker.number().numberBetween(1, 24),
-                        faker.options().option("0", "15", "30", "45").toInt()),
+                        faker.options().option("0", "15", "30", "45").toInt()
+                    ),
                     reservation = reservation,
                     restaurant = restaurant
                 )
@@ -36,32 +38,15 @@ object TimeSlotObjectMother {
         restaurant: Restaurant? = null
     ): TimeSlot {
         return TimeSlot(
-            timeslot = LocalDateTime.of(2022,
+            timeslot = LocalDateTime.of(
+                2022,
                 faker.number().numberBetween(1, 12),
                 faker.number().numberBetween(1, 28),
                 faker.number().numberBetween(1, 24),
-                faker.options().option("0", "15", "30", "45").toInt()),
+                faker.options().option("0", "15", "30", "45").toInt()
+            ),
             reservation = reservation,
             restaurant = restaurant
         )
-    }
-
-    fun createTimeslots(
-        times: Int,
-        reservation: Reservation? = null,
-        restaurant: Restaurant? = null,
-        timeslot: LocalDateTime,
-    ): MutableList<TimeSlot> {
-        val timeslots = mutableListOf<TimeSlot>()
-        IntRange(1, times).map {
-            timeslots.add(
-                TimeSlot(
-                    timeslot = timeslot,
-                    reservation = reservation,
-                    restaurant = restaurant
-                )
-            )
-        }
-        return timeslots
     }
 }

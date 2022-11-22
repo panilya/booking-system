@@ -26,9 +26,6 @@ interface TableRepository : JpaRepository<com.cloudwaitress.bookingsystem.bookin
 @Repository
 interface ReservationRepository : JpaRepository<Reservation, Long> {
 
-//    @Query
-//    fun countByCreatedAtBetweenAndObjectIdEquals(createdAtStart: LocalDateTime, createdAtEnd: LocalDateTime, objectId: String): Long
-
 }
 
 @Repository

@@ -33,7 +33,7 @@ class JdbcReservationRepository(
         return jdbcTemplate.queryForObject(sqlQuery, namedParameters, Long::class.java)!!
     }
 
-    fun countReservationsLastThisDate(objectId: String, period: Period): Long {
+    fun countReservationsLastThisTimePeriod(objectId: String, period: Period): Long {
         val sql = if (period == Period.ALL_TIME) {
             "SELECT count(r.id) FROM restaurant JOIN reservation r ON restaurant.id = r.restaurant_id WHERE restaurant.object_id = :objectId"
         } else {

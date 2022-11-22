@@ -25,7 +25,7 @@ class AdminController(
     @Operation(summary = "Get reservations made in the last specified period")
     @GetMapping("/reservations/{restaurantObjectId}/last")
     fun reservationsLastThisTime(@PathVariable restaurantObjectId: String, @RequestParam("period") period: Period): ResponseEntity<Long> {
-        return ResponseEntity.ok(jdbcReservationRepository.countReservationsLastThisDate(restaurantObjectId, period))
+        return ResponseEntity.ok(jdbcReservationRepository.countReservationsLastThisTimePeriod(restaurantObjectId, period))
     }
 
     @Operation(summary = "Find reservations made between specified period")

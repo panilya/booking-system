@@ -1,0 +1,1 @@
+docker run -p 5432:5432 -d --name blue-table -e POSTGRES_USER=blue-table -e POSTGRES_PASSWORD=blue-table -e POSTGRES_DB=blue-table-db postgres:latest
