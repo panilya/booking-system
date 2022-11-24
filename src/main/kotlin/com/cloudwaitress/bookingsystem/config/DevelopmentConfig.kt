@@ -1,12 +1,13 @@
 package com.cloudwaitress.bookingsystem.config
 
 import com.cloudwaitress.bookingsystem.booking.*
+import com.cloudwaitress.bookingsystem.fakedata.CalendarObjectMother.createCalendar
 import com.cloudwaitress.bookingsystem.fakedata.ClientObjectMother.createClient
 import com.cloudwaitress.bookingsystem.fakedata.ReservationObjectMother
 import com.cloudwaitress.bookingsystem.fakedata.RestaurantObjectMother.createRestaurant
 import com.cloudwaitress.bookingsystem.fakedata.RoomObjectMother.createRoom
 import com.cloudwaitress.bookingsystem.fakedata.TableObjectMother
-import com.cloudwaitress.bookingsystem.fakedata.TimeSlotObjectMother.createTimeslots
+import com.cloudwaitress.bookingsystem.fakedata.TimeSlotObjectMother.createTimeslot
 import net.datafaker.Faker
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
@@ -25,7 +26,8 @@ class DevelopmentConfig {
         tableRepository: TableRepository,
         restaurantRepository: RestaurantRepository,
         timeSlotRepository: TimeSlotRepository,
-        roomRepository: RoomRepository
+        roomRepository: RoomRepository,
+        calendarRepository: CalendarRepository
     ) = CommandLineRunner {
 
         val reset = true
@@ -36,6 +38,7 @@ class DevelopmentConfig {
             clientRepository.deleteAll()
             tableRepository.deleteAll()
             roomRepository.deleteAll()
+            calendarRepository.deleteAll()
             timeSlotRepository.deleteAll()
             restaurantRepository.deleteAll()
         }
@@ -43,18 +46,25 @@ class DevelopmentConfig {
         if (fillDatabase) {
             val ilyaRestaurant = restaurantRepository.save(createRestaurant(name = "Ilya's Restaurant"))
             clientRepository.save(createClient())
-            timeSlotRepository.saveAll(createTimeslots(20, restaurant = ilyaRestaurant))
+//            val timeslot = timeSlotRepository.saveAll(createTimeslots(20))
+            val timeslot = timeSlotRepository.save(createTimeslot())
+            calendarRepository.save(createCalendar(restaurant = ilyaRestaurant, timeslot))
+
 
             IntRange(1, 20).map {
 //                val client = clientRepository.save(createClient())
                 val restaurant = restaurantRepository.save(createRestaurant())
-                val timeslots = timeSlotRepository.saveAll(createTimeslots(20, restaurant = restaurant))
-                for (i in 1..19) {
-                    val client = clientRepository.save(createClient())
-                    reservationRepository.save(ReservationObjectMother.createReservation(client,
-                        timeslots[i], restaurant
-                    ))
-                }
+//                val timeslots = timeSlotRepository.saveAll(createTimeslots(20, restaurant = restaurant))
+                val timeslot = timeSlotRepository.save(createTimeslot())
+                val calendar = calendarRepository.save(createCalendar(restaurant = restaurant, timeslot = timeslot))
+//                for (i in 1..19) {
+//                    val client = clientRepository.save(createClient())
+//                    reservationRepository.save(ReservationObjectMother.createReservation(client,
+//                        timeslots[i], restaurant
+//                    ))
+//                }
+                val client = clientRepository.save(createClient())
+                reservationRepository.save(ReservationObjectMother.createReservation(client = client, restaurant = restaurant, calendar = calendar))
             }
 
             repeat(5) {

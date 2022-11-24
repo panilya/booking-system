@@ -1,32 +1,23 @@
 package com.cloudwaitress.bookingsystem.fakedata
 
-import com.cloudwaitress.bookingsystem.booking.Reservation
-import com.cloudwaitress.bookingsystem.booking.Restaurant
+import com.cloudwaitress.bookingsystem.booking.Calendar
 import com.cloudwaitress.bookingsystem.booking.TimeSlot
 import net.datafaker.Faker
-import java.time.LocalDateTime
+import java.time.LocalTime
 
 object TimeSlotObjectMother {
     private val faker = Faker()
 
     fun createTimeslots(
         times: Int,
-        reservation: Reservation? = null,
-        restaurant: Restaurant? = null
+        calendar: Calendar? = null,
     ): MutableList<TimeSlot> {
         val timeslots = mutableListOf<TimeSlot>()
         IntRange(1, times).map {
             timeslots.add(
                 TimeSlot(
-                    timeslot = LocalDateTime.of(
-                        2022,
-                        faker.number().numberBetween(1, 12),
-                        faker.number().numberBetween(1, 28),
-                        faker.number().numberBetween(1, 24),
-                        faker.options().option("0", "15", "30", "45").toInt()
-                    ),
-                    reservation = reservation,
-                    restaurant = restaurant
+                    timeslot = LocalTime.of(faker.number().numberBetween(1, 24), faker.number().numberBetween(1, 60), faker.number().numberBetween(1, 60)),
+                    calendar = calendar
                 )
             )
         }
@@ -34,19 +25,11 @@ object TimeSlotObjectMother {
     }
 
     fun createTimeslot(
-        reservation: Reservation? = null,
-        restaurant: Restaurant? = null
+        calendar: Calendar? = null,
     ): TimeSlot {
         return TimeSlot(
-            timeslot = LocalDateTime.of(
-                2022,
-                faker.number().numberBetween(1, 12),
-                faker.number().numberBetween(1, 28),
-                faker.number().numberBetween(1, 24),
-                faker.options().option("0", "15", "30", "45").toInt()
-            ),
-            reservation = reservation,
-            restaurant = restaurant
+            timeslot = LocalTime.of(faker.number().numberBetween(1, 24), faker.number().numberBetween(1, 60), faker.number().numberBetween(1, 60)),
+            calendar = calendar
         )
     }
 }

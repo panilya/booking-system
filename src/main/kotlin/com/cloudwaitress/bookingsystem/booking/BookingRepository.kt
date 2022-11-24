@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.*
 import javax.persistence.*
 import javax.persistence.Table
@@ -31,9 +33,10 @@ interface ReservationRepository : JpaRepository<Reservation, Long> {
 @Repository
 interface TimeSlotRepository : JpaRepository<TimeSlot, Long> {
 
-
-
 }
+
+@Repository
+interface CalendarRepository : JpaRepository<Calendar, Long> {}
 
 @Repository
 interface RoomRepository : JpaRepository<Room, Long> {}
@@ -61,7 +64,10 @@ class Restaurant(
     var table: MutableList<com.cloudwaitress.bookingsystem.booking.Table>? = null,
 
     @OneToMany(mappedBy = "restaurant")
-    var timeSlots: MutableList<TimeSlot>? = null,
+    var calendar: MutableList<Calendar>? = null,
+
+//    @OneToMany(mappedBy = "restaurant")
+//    var timeSlots: MutableList<TimeSlot>? = null,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -119,17 +125,49 @@ class Client(
 
 @Entity
 @Table
-class TimeSlot(
-
-    @Column(columnDefinition = "timestamp")
-    var timeslot: LocalDateTime,
-
-    @OneToOne(mappedBy = "timeSlot")
-    var reservation: Reservation? = null,
+class Calendar(
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     var restaurant: Restaurant? = null,
+
+    @OneToOne
+    @JoinColumn(name = "timeslot_id")
+    var timeslot: TimeSlot,
+
+    @OneToOne(mappedBy = "calendar")
+    var reservation: Reservation? = null,
+
+    @Column
+    var date: LocalDate,
+
+    @Column
+    var availabilityStatus: String,
+
+    @Column
+    var objectId: String = UUID.randomUUID().toString(),
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null
+)
+
+@Entity
+@Table
+class TimeSlot(
+
+    @Column(columnDefinition = "time")
+    var timeslot: LocalTime,
+
+//    @OneToOne(mappedBy = "timeSlot")
+//    var reservation: Reservation? = null,
+//
+//    @ManyToOne
+//    @JoinColumn(name = "restaurant_id")
+//    var restaurant: Restaurant? = null,
+
+    @OneToOne(mappedBy = "timeslot")
+    var calendar: Calendar? = null,
 
     @Column
     var objectId: String = UUID.randomUUID().toString(),
@@ -193,8 +231,12 @@ class Reservation(
     var client: Client,
 
     @OneToOne
-    @JoinColumn(name = "time_slot_id")
-    var timeSlot: TimeSlot,
+    @JoinColumn(name = "calendar_id")
+    var calendar: Calendar,
+
+//    @OneToOne
+//    @JoinColumn(name = "time_slot_id")
+//    var timeSlot: TimeSlot,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
