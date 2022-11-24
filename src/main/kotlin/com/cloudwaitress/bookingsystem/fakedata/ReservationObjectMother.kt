@@ -11,8 +11,8 @@ object ReservationObjectMother {
 
     fun createReservation(
         client: Client,
-        timeSlot: TimeSlot,
         restaurant: Restaurant,
+        calendar: Calendar,
         createdAt: LocalDateTime = faker.date().between(faker.date().past(90, TimeUnit.DAYS), Timestamp.valueOf(LocalDateTime.now())).toLocalDateTime()
     ): Reservation {
         return Reservation(
@@ -21,8 +21,8 @@ object ReservationObjectMother {
             partySize = faker.number().numberBetween(1, 6),
             createdAt = createdAt,
             client = client,
-            timeSlot = timeSlot,
-            restaurant = restaurant
+            restaurant = restaurant,
+            calendar = calendar
         )
     }
 

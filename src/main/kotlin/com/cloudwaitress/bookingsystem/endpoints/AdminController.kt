@@ -1,11 +1,12 @@
 package com.cloudwaitress.bookingsystem.endpoints
 
 import com.cloudwaitress.bookingsystem.booking.JdbcReservationRepository
-import com.cloudwaitress.bookingsystem.booking.ReservationRepository
 import com.cloudwaitress.bookingsystem.booking.RestaurantRepository
+import com.cloudwaitress.bookingsystem.booking.TimeSlot
 import com.cloudwaitress.bookingsystem.endpoints.dto.GenericResponse
 import com.cloudwaitress.bookingsystem.endpoints.dto.TimeSlotDto
 import com.cloudwaitress.bookingsystem.fakedata.RestaurantObjectMother
+import com.cloudwaitress.bookingsystem.timeslot.TimeslotsService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
@@ -18,8 +19,8 @@ import java.time.format.DateTimeFormatter
 @RestController
 class AdminController(
     private val jdbcReservationRepository: JdbcReservationRepository,
-    private val reservationRepository: ReservationRepository,
-    private val restaurantRepository: RestaurantRepository
+    private val restaurantRepository: RestaurantRepository,
+    private val timeslotsService: TimeslotsService
 ) {
 
     @Operation(summary = "Get reservations made in the last specified period")
@@ -52,7 +53,17 @@ class AdminController(
         return ResponseEntity.ok(GenericResponse("Restaurant successfully created!"))
     }
 
+//    @Operation(summary = "Generate timeslots with the given step")
+//    @PostMapping("/timeslots/{restaurantObjectId}/generate")
+//    fun autoGenerateTimeslot(@PathVariable restaurantObjectId: String, @RequestBody timeslotsCommand: GenerateTimeslotsCommand): ResponseEntity<List<TimeSlot>> {
+//        return ResponseEntity.ok(timeslotsService.generateTimeslots(timeslotsCommand.slotSizeIntMinutes, timeslotsCommand.startTime, timeslotsCommand.endTime))
+//    }
+
 }
+
+data class GenerateTimeslotsCommand(
+    val slotSizeIntMinutes: Int, val startTime: String, val endTime: String
+)
 
 data class CreateRestaurantCommand(
     val name: String, val openingHours: String

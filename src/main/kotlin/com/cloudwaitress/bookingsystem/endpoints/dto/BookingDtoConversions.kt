@@ -1,6 +1,5 @@
 package com.cloudwaitress.bookingsystem.endpoints.dto
 
-import com.cloudwaitress.bookingsystem.booking.TimeSlot
 import java.time.LocalDateTime
 
 //fun TimeSlot.toDto(): TimeSlotDto {
